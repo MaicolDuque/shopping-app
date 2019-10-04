@@ -1,7 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import FormLogin from '../components/Login';
 
-const Login = () => (
+const API = 'https://shopping-cart-api.maicolduque.now.sh/auth/local/';
+
+const sendLogin = async(form) => {
+  
+  const payload = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(form),
+  };
+
+  
+  try {
+    const result = await fetch(API, payload);
+    const user = await result.json();
+    if (user && user.token) {
+      localStorage.setItem('userEco', JSON.stringify(user))
+      window.location.href = "/";
+    }
+  } catch (error) {
+    console.error('Error :(', error);
+  }
+}
+
+const Login = () => {
+  return (
   <div className="container">
     <div className="row justify-content-center">
       <div className="col-xl-10 col-lg-12 col-md-9">
@@ -14,23 +39,7 @@ const Login = () => (
                   <div className="text-center">
                     <h1 className="h4 text-gray-900 mb-4">Welcome Back!</h1>
                   </div>
-                  <form className="user">
-                    <div className="form-group">
-                      <input
-                        type="email"
-                        className="form-control form-control-user"
-                        id="exampleInputEmail"
-                        aria-describedby="emailHelp"
-                        placeholder="Enter Email Address..."
-                      />
-                    </div>
-                    <div className="form-group">
-                      <input type="password" className="form-control form-control-user" id="exampleInputPassword" placeholder="Password" />
-                    </div>
-                    <a href="index.html" className="btn btn-primary btn-user btn-block">
-                      Login
-                    </a>
-                  </form>
+                  <FormLogin handleSumbit={sendLogin} />
                   <hr />
                   <div className="text-center">
                     <Link className="small" to="/register">Create an Account!</Link>
@@ -43,6 +52,7 @@ const Login = () => (
       </div>
     </div>
   </div>
-);
+  )
+};
 
 export default Login;
