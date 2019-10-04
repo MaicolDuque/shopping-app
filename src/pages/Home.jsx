@@ -29,7 +29,7 @@ const Home = () => {
           {
             products.map((product, idx) => (
               <div key={idx} className="col-lg-4 col-md-6 mb-4">
-                <Product  productos={product} />
+                <Product  {...product} />
               </div>
             ))
           }
