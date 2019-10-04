@@ -1,5 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+
+import FormRegister from '../components/Register';
+
+const API = 'https://shopping-cart-api.maicolduque.now.sh/api/users';
+
+const createUser = async(form) => {
+  form.name = `${form.name} ${form.lastName}`;
+  const payload = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(form),
+  };
+
+  
+  try {
+    const result = await fetch(API, payload);
+    const user = await result.json();
+    if (user && user.token) {
+      localStorage.setItem('userEco', JSON.stringify(user))
+      window.location.href = "/";
+    }
+  } catch (error) {
+    console.error('Error :(', error);
+  }
+}
 
 const Register = () => (
   <div className="container">
@@ -12,30 +37,7 @@ const Register = () => (
               <div className="text-center">
                 <h1 className="h4 text-gray-900 mb-4">Create an Account!</h1>
               </div>
-              <form className="user">
-                <div className="form-group row">
-                  <div className="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" className="form-control form-control-user" id="exampleFirstName" placeholder="First Name" />
-                  </div>
-                  <div className="col-sm-6">
-                    <input type="text" className="form-control form-control-user" id="exampleLastName" placeholder="Last Name" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <input type="email" className="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" />
-                </div>
-                <div className="form-group row">
-                  <div className="col-sm-6 mb-3 mb-sm-0">
-                    <input type="password" className="form-control form-control-user" id="exampleInputPassword" placeholder="Password" />
-                  </div>
-                  <div className="col-sm-6">
-                    <input type="password" className="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" />
-                  </div>
-                </div>
-                <a href="Register.html" className="btn btn-primary btn-user btn-block">
-                  Register Account
-                </a>
-              </form>
+              <FormRegister handleSumbit={createUser} />
               <hr />
               <div className="text-center">
                 <Link className="small" to="/login">Already have an account? Login!</Link>
@@ -48,4 +50,4 @@ const Register = () => (
   </div>
 );
 
-export default Register;
+export default withRouter(Register);
